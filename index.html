@@ -5,6 +5,7 @@
 	<meta name=s"viewport" content="width=device-width, initial-scale=1" />
 	<meta name="description" content="ZK Mobile Mechanic - Single-file React app (GTA & Durham)" />
 	<title>ZK Mobile Mechanic | Single-file React</title>
+	<link rel="icon" href="oil_change.png" type="image/png">
 	<!-- Tailwind CDN for utility classes -->
 	<script src="https://cdn.tailwindcss.com"></script>
 	<!-- React & ReactDOM -->
@@ -28,6 +29,22 @@
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         .icon-bounce:hover { animation: bounce 0.6s ease; }
         @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+        @keyframes blueGlowPulse {
+            0% {
+                box-shadow: 0 0 10px 2px rgba(0, 162, 255, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 25px 6px rgba(0, 195, 255, 1);
+            }
+            100% {
+                box-shadow: 0 0 10px 2px rgba(0, 162, 255, 0.7);
+            }
+        }
+
+        .btn-blue-glow {
+            animation: blueGlowPulse 2s infinite ease-in-out;
+        }
+
         .shimmer { animation: shimmer 2s infinite; background: linear-gradient(to right, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%); background-size: 2000px 100%; }
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
@@ -48,6 +65,7 @@
 
     // Simple utility to merge classes
     function cn(...args) { return args.filter(Boolean).join(' '); }
+
 
     // Small SVG icon components (Lucide-inspired)
     function PhoneIcon(props) {
@@ -115,14 +133,12 @@
 
     const PHONE_NUMBER = '(416) 566-8154';
     const PHONE_LINK = 'tel:+14165668154';
-    const LOGO_URL = 'https://customer-assets.emergentagent.com/job_auto-book-plus/artifacts/7gmmsm6m_zk_mobile_mechanic.png';
+    const LOGO_URL = 'oil_chane.png';
 
     const services = [
-        { id:1, title:'Oil Change', price:'$XX.XX', icon:'🛢️', description:'Professional oil and filter change using high-quality synthetic or conventional oil. We serve the entire GTA and Durham region, bringing our mobile service directly to your location. Keep your engine running smoothly with regular maintenance from our certified technicians.', features:['Synthetic & Conventional Options','Filter Replacement','Fluid Top-Up','Multi-Point Inspection'] },
-        { id:2, title:'Brake Repair', price:'$XX.XX', icon:'🔧', description:'Complete brake system service available throughout GTA and Durham. Our mobile mechanics come equipped to handle pad replacement, rotor resurfacing, and full brake system diagnostics. Safety is our priority - we ensure your brakes are in perfect working condition.', features:['Pad Replacement','Rotor Service','Brake Fluid Check','Safety Inspection'] },
-        { id:3, title:'Battery Replacement', price:'$XX.XX', icon:'🔋', description:'Fast battery replacement service across GTA and Durham region. We carry quality batteries and can test, replace, and properly dispose of your old battery. Our mobile service means you\'ll never be stranded with a dead battery again.', features:['Battery Testing','Premium Batteries','Free Installation','Old Battery Disposal'] },
-        { id:4, title:'Full Diagnostics', price:'$XX.XX', icon:'💻', description:'Comprehensive vehicle diagnostics for GTA and Durham customers. Using advanced diagnostic equipment, we identify issues quickly and accurately. From check engine lights to mysterious noises, our certified technicians pinpoint the problem and provide clear solutions.', features:['Computer Diagnostics','Error Code Reading','System Testing','Detailed Report'] },
-        { id:5, title:'Tire Service', price:'$XX.XX', icon:'🚗', description:'Complete tire services for residents of GTA and Durham. We handle tire changes, rotations, balancing, and repairs. Whether you need seasonal tire swaps or emergency flat repair, our mobile service brings the tire shop to your driveway.', features:['Tire Installation','Rotation & Balance','Flat Repair','Seasonal Swaps'] }
+        { id:1, title:'Oil Change', price:'$95: Synthetic -- $75: Regular ', icon:'🛢️', description:'', features:['Synthetic & Conventional Options','Filter Replacement','Fluid Top-Up','Multi-Point Inspection'] },
+        { id:2, title:'Road Side Services', price:'$XX.XX', icon:'🔋', description:'', features:['Battery Jump','Battery Replacement','Flat Repair','Old Battery Disposal'] },
+        { id:3, title:'Brake and Tire Services', price:'$XX.XX', icon:'🔧', description:'', features:['Pad Replacement','Brake Fluid replacement'] }
     ];
 
     function App(){
@@ -137,9 +153,9 @@
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between items-center h-20">
                             <div className="flex items-center space-x-3">
-                                <img src={LOGO_URL} alt="ZK Mobile Mechanic Logo" className="h-16 w-auto" />
+                                <img src={'oil_change.png'} alt="ZK Mobile Mechanic Logo" className="h-16 w-auto" />
                                 <div>
-                                    <h1 className="text-xl font-bold text-white">ZK Mobile Mechanic</h1>
+                                    <h1 className="text-xl font-bold text-white">Oil Change</h1>
                                     <p className="text-xs text-gray-300">Serving GTA & Durham</p>
                                 </div>
                             </div>
@@ -159,7 +175,7 @@
                     <div className="max-w-7xl mx-auto">
                         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
                             <div className="flex-shrink-0 lg:w-1/2 flex justify-center lg:justify-start">
-                                <img src={LOGO_URL} alt="ZK Mobile Mechanic Logo" className="h-64 md:h-80 lg:h-96 w-auto animate-fade-in-up" />
+                                <img src={'oil_change.png'} alt="ZK Mobile Mechanic Logo" className="h-64 md:h-80 lg:h-96 w-auto animate-fade-in-up" />
                             </div>
                             <div className="flex-1 text-center lg:text-left">
                                 <Badge className="mb-6 bg-blue-500/20 text-blue-300 border border-blue-400 inline-flex items-center px-3 py-1 rounded-md">
@@ -171,14 +187,27 @@
                                     <span className="block bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Mechanic Service</span>
                                 </h1>
                                 <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl lg:max-w-none">Expert automotive care that comes to you. Quality repairs and maintenance at your location across GTA and Durham.</p>
-                                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
-                                    <Button size="lg" onClick={()=>window.location.href=PHONE_LINK} className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all btn-glow">
-                                        <PhoneIcon className="mr-2 h-5 w-5" /> Book Appointment: {PHONE_NUMBER}
+                                <div className="flex flex-col items-center space-y-4 w-full">
+
+                                    <Button
+                                        size="lg"
+                                        onClick={() => window.location.href = PHONE_LINK}
+                                        className="w-[100%] max-w-xl bg-gradient-to-r from-blue-600 to-cyan-500hover:from-blue-700 hover:to-cyan-600text-lg py-4 shadow-xl transition-all btn-blue-glow"
+                                    >
+                                        <PhoneIcon className="mr-2 h-5 w-5" /> CALL NOW: {PHONE_NUMBER}
                                     </Button>
-                                    <Button size="lg" onClick={()=>scrollTo('services')} className="text-lg px-8 py-6 border-2 border-gray-400 text-white hover:bg-white/10">
+
+                                    <Button
+                                        size="lg"
+                                        onClick={() => scrollTo('services')}
+                                        className="w-[100%] max-w-xl text-lg py-4 border-2 border-gray-400
+               text-white hover:bg-white/10"
+                                    >
                                         View Services
                                     </Button>
+
                                 </div>
+
                             </div>
                         </div>
 
@@ -186,7 +215,7 @@
                         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                             <div className="text-center p-6 bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-700">
                                 <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><CheckCircleIcon className="w-8 h-8 text-blue-400" /></div>
-                                <h3 className="font-bold text-white mb-2">Certified Technicians</h3>
+                                <h3 className="font-bold text-white mb-2">Experienced Mechanics</h3>
                                 <p className="text-gray-400 text-sm">Experienced professionals you can trust</p>
                             </div>
                             <div className="text-center p-6 bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-700">
@@ -261,7 +290,7 @@
                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Service Coverage Area</h2>
                         <p className="text-lg text-gray-300 mb-6">We proudly serve the entire <span className="font-bold text-blue-400">Greater Toronto Area (GTA)</span> and <span className="font-bold text-blue-400">Durham Region</span>. Our mobile mechanics bring professional automotive service directly to your home, office, or any location that's convenient for you.</p>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                            {['Toronto','Mississauga','Brampton','Markham','Vaughan','Richmond Hill','Oshawa','Whitby'].map(c=> (
+                            {['Toronto','Scarborough','Oshawa','Markham','Pickering','Ajax','Richmond Hill','Whitby'].map(c=> (
                                 <div key={c} className="bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-700 hover:border-blue-500"><p className="font-semibold text-white">{c}</p></div>
                             ))}
                         </div>
@@ -273,7 +302,7 @@
                     <div className="max-w-7xl mx-auto">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                             <div>
-                                <div className="flex items-center space-x-3 mb-4"><img src={LOGO_URL} alt="ZK Logo" className="h-12 w-auto" /><h3 className="text-xl font-bold">ZK Mobile Mechanic</h3></div>
+                                <div className="flex items-center space-x-3 mb-4"><img src={'oil_change.png'} alt="ZK Logo" className="h-12 w-auto" /><h3 className="text-xl font-bold">Oil Change</h3></div>
                                 <p className="text-gray-400">Professional mobile mechanic services across GTA and Durham Region.</p>
                             </div>
                             <div>
@@ -285,7 +314,7 @@
                                 <ul className="space-y-2 text-gray-400"><li>Oil Changes</li><li>Brake Repairs</li><li>Battery Replacement</li><li>Diagnostics</li><li>Tire Services</li></ul>
                             </div>
                         </div>
-                        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400"><p>© 2025 ZK Mobile Mechanic. All rights reserved.</p></div>
+                        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400"><p>© 2025 Oil Change. All rights reserved.</p></div>
                     </div>
                 </footer>
 
