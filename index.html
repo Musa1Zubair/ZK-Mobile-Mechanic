@@ -4,7 +4,7 @@
 	<meta charset="utf-8" />
 	<meta name=s"viewport" content="width=device-width, initial-scale=1" />
 	<meta name="description" content="ZK Mobile Mechanic - Single-file React app (GTA & Durham)" />
-	<title>ZK Mobile Mechanic | Single-file React</title>
+	<title>Mobile Oil Change</title>
 	<link rel="icon" href="mobile_oil_change.png" type="image/png">
 	<!-- Tailwind CDN for utility classes -->
 	<script src="https://cdn.tailwindcss.com"></script>
@@ -176,11 +176,11 @@
                             <div className="flex-shrink-0 lg:w-1/2 flex justify-center lg:justify-start">
                                 <img src={'mobile_oil_change.png'} alt="ZK Mobile Mechanic Logo" className="h-64 md:h-80 lg:h-96 w-auto animate-fade-in-up" />
                             </div>
-                            <div className="flex-1 text-center lg:text-left">
-                                <Badge className="mb-6 bg-blue-500/20 text-blue-300 border border-blue-400 inline-flex items-center px-3 py-1 rounded-md">
+                            <div className="flex-1 text-center sm:text-left">
+                                <Button onClick={() => scrollTo('locations')} className="mb-6 bg-blue-500/20 text-blue-300 border border-blue-400 inline-flex items-center px-3 py-1 rounded-md">
                                     <MapPinIcon className="w-3 h-3 mr-1" />
                                     Serving GTA & Durham Region
-                                </Badge>
+                                </Button>
                                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
                                     Professional Mobile
                                     <span className="block bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Mechanic Service</span>
@@ -283,7 +283,7 @@
                 </section>
 
                 {/* Coverage */}
-                <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black to-gray-900">
+                <section id='locations' className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black to-gray-900">
                     <div className="max-w-4xl mx-auto text-center">
                         <div className="flex items-center justify-center mb-6"><MapPinIcon className="w-12 h-12 text-blue-400" /></div>
                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Service Coverage Area</h2>
