@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name=s"viewport" content="width=device-width, initial-scale=1" />
+	<meta name="description" content="ZK Mobile Mechanic - Single-file React app (GTA & Durham)" />
+	<title>ZK Mobile Mechanic | Single-file React</title>
+	<!-- Tailwind CDN for utility classes -->
+	<script src="https://cdn.tailwindcss.com"></script>
+	<!-- React & ReactDOM -->
+	<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+	<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+	<!-- Babel to support JSX in the browser (for development/demo only) -->
+	<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+	<style>
+        /* Combined custom CSS (from App.css + index.css simplified for single-file) */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        .animate-fade-in-up { animation: fadeInUp 0.8s ease-out; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        html { scroll-behavior: smooth; }
+        .gradient-text { background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .service-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .service-card:hover { transform: translateY(-8px) scale(1.02); }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); } 50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); } }
+        .btn-glow:hover { animation: pulse-glow 2s ease-in-out infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .icon-bounce:hover { animation: bounce 0.6s ease; }
+        @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+        .shimmer { animation: shimmer 2s infinite; background: linear-gradient(to right, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%); background-size: 2000px 100%; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #3b82f6 0%, #06b6d4 100%); border-radius: 5px; }
+        button:focus-visible, a:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+        * { transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+        .rounded-xl { border-radius: 1rem; }
+        .card-base { background: rgba(15,23,42,0.6); border: 1px solid rgba(148,163,184,0.06); color: #e6eef8; }
+        /* small responsive tweaks */
+        @media (max-width: 768px) { .hero-title { font-size: 2.5rem; } }
+	</style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-black via-gray-900 to-blue-900 text-white">
+<div id="root"></div>
+
+<script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Simple utility to merge classes
+    function cn(...args) { return args.filter(Boolean).join(' '); }
+
+    // Small SVG icon components (Lucide-inspired)
+    function PhoneIcon(props) {
+        return (
+            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={props.className}>
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.86 19.86 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.86 19.86 0 0 1 2.08 4.18 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.72c.12.83.36 1.65.72 2.41a2 2 0 0 1-.45 2.11L9.91 9.91a16 16 0 0 0 6 6l1.67-1.67a2 2 0 0 1 2.11-.45c.76.36 1.58.6 2.41.72A2 2 0 0 1 22 16.92z" />
+            </svg>
+        );
+    }
+    function WrenchIcon(props){
+        return (
+            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14.7 7.3a4 4 0 0 0-5.66 5.66L12 15.59V20h4.41l2.96-2.96a4 4 0 0 0-4.67-6.74z" />
+            </svg>
+        );
+    }
+    function CheckCircleIcon(props){
+        return (
+            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 12l2 2 4-4" />
+                <circle cx="12" cy="12" r="10" />
+            </svg>
+        );
+    }
+    function MapPinIcon(props){
+        return (
+            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
+            </svg>
+        );
+    }
+    function ClockIcon(props){
+        return (
+            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 6v6l4 2" />
+            </svg>
+        );
+    }
+    function StarIcon(props){
+        return (
+            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 17.3L5.6 20l1.1-6.4L2 9.3l6.5-.9L12 2l3.5 6.4 6.5.9-4.7 4.3L18.4 20z" />
+            </svg>
+        );
+    }
+
+    // UI primitives (Button, Card, Badge) — simplified
+    function Button({ children, className, ...props }) {
+        return (
+            <button {...props} className={cn('inline-flex items-center gap-2 rounded-md font-medium px-4 py-2', className)}>
+                {children}
+            </button>
+        );
+    }
+    function Card({ children, className }) {
+        return <div className={cn('rounded-xl card-base', className)}>{children}</div>;
+    }
+    function CardHeader({ children, className }) { return <div className={cn('p-6', className)}>{children}</div>; }
+    function CardContent({ children, className }) { return <div className={cn('p-6 pt-0', className)}>{children}</div>; }
+    function CardTitle({ children, className }) { return <h3 className={cn('text-2xl font-semibold', className)}>{children}</h3>; }
+    function CardDescription({ children, className }) { return <p className={cn('text-sm text-gray-300', className)}>{children}</p>; }
+    function Badge({ children, className }) { return <div className={cn('inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-semibold', className)}>{children}</div>; }
+
+    const PHONE_NUMBER = '(416) 566-8154';
+    const PHONE_LINK = 'tel:+4165668154';
+    const LOGO_URL = 'https://customer-assets.emergentagent.com/job_auto-book-plus/artifacts/7gmmsm6m_zk_mobile_mechanic.png';
+
+    const services = [
+        { id:1, title:'Oil Change', price:'$XX.XX', icon:'🛢️', description:'Professional oil and filter change using high-quality synthetic or conventional oil. We serve the entire GTA and Durham region, bringing our mobile service directly to your location. Keep your engine running smoothly with regular maintenance from our certified technicians.', features:['Synthetic & Conventional Options','Filter Replacement','Fluid Top-Up','Multi-Point Inspection'] },
+        { id:2, title:'Brake Repair', price:'$XX.XX', icon:'🔧', description:'Complete brake system service available throughout GTA and Durham. Our mobile mechanics come equipped to handle pad replacement, rotor resurfacing, and full brake system diagnostics. Safety is our priority - we ensure your brakes are in perfect working condition.', features:['Pad Replacement','Rotor Service','Brake Fluid Check','Safety Inspection'] },
+        { id:3, title:'Battery Replacement', price:'$XX.XX', icon:'🔋', description:'Fast battery replacement service across GTA and Durham region. We carry quality batteries and can test, replace, and properly dispose of your old battery. Our mobile service means you\'ll never be stranded with a dead battery again.', features:['Battery Testing','Premium Batteries','Free Installation','Old Battery Disposal'] },
+        { id:4, title:'Full Diagnostics', price:'$XX.XX', icon:'💻', description:'Comprehensive vehicle diagnostics for GTA and Durham customers. Using advanced diagnostic equipment, we identify issues quickly and accurately. From check engine lights to mysterious noises, our certified technicians pinpoint the problem and provide clear solutions.', features:['Computer Diagnostics','Error Code Reading','System Testing','Detailed Report'] },
+        { id:5, title:'Tire Service', price:'$XX.XX', icon:'🚗', description:'Complete tire services for residents of GTA and Durham. We handle tire changes, rotations, balancing, and repairs. Whether you need seasonal tire swaps or emergency flat repair, our mobile service brings the tire shop to your driveway.', features:['Tire Installation','Rotation & Balance','Flat Repair','Seasonal Swaps'] }
+    ];
+
+    function App(){
+        const [scrolled, setScrolled] = useState(false);
+        useEffect(()=>{ const handle = () => setScrolled(window.scrollY > 50); window.addEventListener('scroll', handle); return () => window.removeEventListener('scroll', handle); }, []);
+        const scrollTo = id => document.getElementById(id)?.scrollIntoView({ behavior:'smooth' });
+
+        return (
+            <div>
+                {/* Nav */}
+                <nav className={cn('fixed top-0 w-full z-50 transition-all duration-300', scrolled ? 'bg-gray-900/95 backdrop-blur-sm shadow-lg' : 'bg-transparent')}>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex justify-between items-center h-20">
+                            <div className="flex items-center space-x-3">
+                                <img src={LOGO_URL} alt="ZK Mobile Mechanic Logo" className="h-16 w-auto" />
+                                <div>
+                                    <h1 className="text-xl font-bold text-white">ZK Mobile Mechanic</h1>
+                                    <p className="text-xs text-gray-300">Serving GTA & Durham</p>
+                                </div>
+                            </div>
+                            <div className="hidden md:flex items-center space-x-6">
+                                <button onClick={()=>scrollTo('services')} className="text-gray-200 hover:text-blue-400 transition-colors font-medium">Services</button>
+                                <button onClick={()=>scrollTo('contact')} className="text-gray-200 hover:text-blue-400 transition-colors font-medium">Contact</button>
+                                <Button onClick={()=>window.location.href=PHONE_LINK} className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white px-4 py-2">
+                                    <PhoneIcon className="mr-2 h-4 w-4" /> Call Now
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+
+                {/* Hero */}
+                <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+                            <div className="flex-shrink-0 lg:w-1/2 flex justify-center lg:justify-start">
+                                <img src={LOGO_URL} alt="ZK Mobile Mechanic Logo" className="h-64 md:h-80 lg:h-96 w-auto animate-fade-in-up" />
+                            </div>
+                            <div className="flex-1 text-center lg:text-left">
+                                <Badge className="mb-6 bg-blue-500/20 text-blue-300 border border-blue-400 inline-flex items-center px-3 py-1 rounded-md">
+                                    <MapPinIcon className="w-3 h-3 mr-1" />
+                                    Serving GTA & Durham Region
+                                </Badge>
+                                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+                                    Professional Mobile
+                                    <span className="block bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Mechanic Service</span>
+                                </h1>
+                                <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl lg:max-w-none">Expert automotive care that comes to you. Quality repairs and maintenance at your location across GTA and Durham.</p>
+                                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
+                                    <Button size="lg" onClick={()=>window.location.href=PHONE_LINK} className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all btn-glow">
+                                        <PhoneIcon className="mr-2 h-5 w-5" /> Book Appointment: {PHONE_NUMBER}
+                                    </Button>
+                                    <Button size="lg" onClick={()=>scrollTo('services')} className="text-lg px-8 py-6 border-2 border-gray-400 text-white hover:bg-white/10">
+                                        View Services
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Trust Indicators */}
+                        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                            <div className="text-center p-6 bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-700">
+                                <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><CheckCircleIcon className="w-8 h-8 text-blue-400" /></div>
+                                <h3 className="font-bold text-white mb-2">Certified Technicians</h3>
+                                <p className="text-gray-400 text-sm">Experienced professionals you can trust</p>
+                            </div>
+                            <div className="text-center p-6 bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-700">
+                                <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><ClockIcon className="w-8 h-8 text-blue-400" /></div>
+                                <h3 className="font-bold text-white mb-2">Fast Service</h3>
+                                <p className="text-gray-400 text-sm">Quick response across GTA & Durham</p>
+                            </div>
+                            <div className="text-center p-6 bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-700">
+                                <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4"><StarIcon className="w-8 h-8 text-blue-400" /></div>
+                                <h3 className="font-bold text-white mb-2">Top Quality</h3>
+                                <p className="text-gray-400 text-sm">Premium parts and guaranteed work</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Services */}
+                <section id="services" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900 to-black">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Our Services</h2>
+                            <p className="text-xl text-gray-300 max-w-2xl mx-auto">Comprehensive mobile mechanic services for all your vehicle needs in GTA and Durham</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {services.map((service) => (
+                                <Card key={service.id} className="hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-gray-700 hover:border-blue-500 group bg-gray-800/50 backdrop-blur-sm">
+                                    <CardHeader>
+                                        <div className="flex items-start justify-between mb-4">
+                                            <div className="w-16 h-16 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl flex items-center justify-center text-4xl group-hover:scale-110 transition-transform border border-blue-500/30">{service.icon}</div>
+                                            <Badge className="text-lg font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">{service.price}</Badge>
+                                        </div>
+                                        <CardTitle className="text-2xl mb-2 text-white">{service.title}</CardTitle>
+                                        <CardDescription className="text-base leading-relaxed text-gray-300">{service.description}</CardDescription>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="space-y-2">
+                                            <p className="font-semibold text-sm text-gray-300 mb-3">What's Included:</p>
+                                            {service.features.map((f, i) => (
+                                                <div key={i} className="flex items-center text-sm text-gray-400"><CheckCircleIcon className="w-4 h-4 mr-2 text-green-400 flex-shrink-0" />{f}</div>
+                                            ))}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* CTA / Contact */}
+                <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-4xl mx-auto">
+                        <Card className="bg-gradient-to-br from-blue-600 to-cyan-500 border-0 shadow-2xl overflow-hidden">
+                            <CardContent className="p-12 text-center text-white">
+                                <WrenchIcon className="w-16 h-16 mx-auto mb-6 animate-pulse" />
+                                <h2 className="text-4xl md:text-5xl font-bold mb-4">Ready to Get Started?</h2>
+                                <p className="text-xl mb-8 text-blue-50">Call us now to book your mobile mechanic appointment in GTA or Durham</p>
+                                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                                    <Button onClick={()=>window.location.href=PHONE_LINK} className="bg-white text-blue-600 hover:bg-gray-100 text-2xl px-10 py-8 shadow-xl hover:shadow-2xl transition-all font-bold">
+                                        <PhoneIcon className="mr-3 h-6 w-6" /> {PHONE_NUMBER}
+                                    </Button>
+                                </div>
+                                <p className="mt-6 text-blue-50 text-sm">Available across Greater Toronto Area and Durham Region</p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </section>
+
+                {/* Coverage */}
+                <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black to-gray-900">
+                    <div className="max-w-4xl mx-auto text-center">
+                        <div className="flex items-center justify-center mb-6"><MapPinIcon className="w-12 h-12 text-blue-400" /></div>
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Service Coverage Area</h2>
+                        <p className="text-lg text-gray-300 mb-6">We proudly serve the entire <span className="font-bold text-blue-400">Greater Toronto Area (GTA)</span> and <span className="font-bold text-blue-400">Durham Region</span>. Our mobile mechanics bring professional automotive service directly to your home, office, or any location that's convenient for you.</p>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                            {['Toronto','Mississauga','Brampton','Markham','Vaughan','Richmond Hill','Oshawa','Whitby'].map(c=> (
+                                <div key={c} className="bg-gray-800/50 backdrop-blur-sm p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-700 hover:border-blue-500"><p className="font-semibold text-white">{c}</p></div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Footer */}
+                <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div>
+                                <div className="flex items-center space-x-3 mb-4"><img src={LOGO_URL} alt="ZK Logo" className="h-12 w-auto" /><h3 className="text-xl font-bold">ZK Mobile Mechanic</h3></div>
+                                <p className="text-gray-400">Professional mobile mechanic services across GTA and Durham Region.</p>
+                            </div>
+                            <div>
+                                <h4 className="font-bold text-lg mb-4">Contact</h4>
+                                <div className="space-y-2 text-gray-400"><p className="flex items-center"><PhoneIcon className="w-4 h-4 mr-2" />{PHONE_NUMBER}</p><p className="flex items-center"><MapPinIcon className="w-4 h-4 mr-2" />GTA & Durham Region</p></div>
+                            </div>
+                            <div>
+                                <h4 className="font-bold text-lg mb-4">Services</h4>
+                                <ul className="space-y-2 text-gray-400"><li>Oil Changes</li><li>Brake Repairs</li><li>Battery Replacement</li><li>Diagnostics</li><li>Tire Services</li></ul>
+                            </div>
+                        </div>
+                        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400"><p>© 2025 ZK Mobile Mechanic. All rights reserved.</p></div>
+                    </div>
+                </footer>
+
+            </div>
+        );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<React.StrictMode><App /></React.StrictMode>);
+</script>
+
+</body>
+</html>
